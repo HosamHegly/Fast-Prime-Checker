@@ -13,16 +13,14 @@ int * arr ;
 int isPrime(int num){
 int i;
 
-
 if(num==2) return 1;
-
 
    
  if(num%2==0)
 return 0;
 
 
-
+    //if(((num*num)-1)%8!=0)return 0;
 
    
 
@@ -47,49 +45,66 @@ void* fuck(void * arg)
     }
 }
 
+/*void* fuck2(void * arg)
+{  struct sum_runner_struct *arg_struct =
+			(struct sum_runner_struct*) arg;
 
-void SieveOfEratosthenes(int n)
-{  int s=0;
-    // Create a boolean array
-    // "prime[0..n]" and initialize
-    // all entries it as true.
-    // A value in prime[i] will
-    // finally be false if i is
-    // Not a prime, else true.
-    bool prime[n + 1];
-    memset(prime, true, sizeof(prime));
- 
-  if(n>=2)
-   arr[s++]=2;
+   for(int i=arg_struct->start;i<arg_struct->finish;i++)
+    {    
+          if(isPrime(i))
+           { pthread_mutex_lock(&lock);
+             arr[i]=
+             pthread_mutex_unlock(&lock);
+                   }
+    }
+}*/
 
+int fuck2(int limit)
+{ long s=0;
+    // 2 and 3 are known to be prime
+    if (limit > 2)
+        arr[s++]=2;
+    if (limit > 3)
+        arr[s++]=3;
+  
 
+    bool sieve[limit];
+    for (int i = 0; i < limit; i++)
+        sieve[i] = false;
+  
+    
+    for (int x = 1; x * x < limit; x++) {
+        for (int y = 1; y * y < limit; y++) {
+              
 
-    for (int p = 2; p*p <= n; p++)
-    {  
-        // If prime[p] is not changed,
-        // then it is a prime
-        if (prime[p] == true)
-        {
-            // Update all multiples
-            // of p greater than or
-            // equal to the square of it
-            // numbers which are multiple
-            // of p and are less than p^2
-            // are already been marked.
-
-            for (int i = p * p; i <= n; i += p)
-                prime[i] = false;
+            int n = (4 * x * x) + (y * y);
+            if (n <= limit && (n % 12 == 1 || n % 12 == 5))
+                sieve[n] ^= true;
+  
+            n = (3 * x * x) + (y * y);
+            if (n <= limit && n % 12 == 7)
+                sieve[n] ^= true;
+  
+            n = (3 * x * x) - (y * y);
+            if (x > y && n <= limit && n % 12 == 11)
+                sieve[n] ^= true;
         }
     }
-
-
-    for(long p = 3; p <=n; p+=2)
-{
-        if (prime[p]){arr[s++]=p;
-           c++;
-          }
-
+  
+    // Mark all multiples of squares as non-prime
+    for (int r = 5; r * r < limit; r++) {
+        if (sieve[r]) {
+            for (int i = r * r; i < limit; i += r * r)
+                sieve[i] = false;
+        }
     }
+  
+    // Print primes using sieve[]
+    for (int a = 5; a < limit; a+=6){
+        if (sieve[a]){c++;
+          arr[s++]=a;}
+  if (sieve[a+2]){c++;
+          arr[s++]=a+2;}}
 }
 int main(int argc, char *argv[])
 {
@@ -107,14 +122,14 @@ int i;
  numOfRandomNumbers = atoi(argv[2]);
 int random = rand();
 srand(randomPivot);
-arr=(int*) malloc (46340*sizeof(int));
+arr=(int*) malloc (46341*sizeof(int));
 
 
 long size1 =numOfRandomNumbers/4;
 long size2=(2*numOfRandomNumbers/4)-numOfRandomNumbers/4;
 long size3=(3*numOfRandomNumbers/4)-(2*numOfRandomNumbers/4);
 long size4=numOfRandomNumbers-(3*numOfRandomNumbers/4);
-SieveOfEratosthenes(46340);
+fuck2(46341);
 
 pthread_create(&tids[0], NULL, fuck, &size1);
 pthread_create(&tids[1], NULL, fuck, &size2);

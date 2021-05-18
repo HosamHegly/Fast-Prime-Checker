@@ -27,11 +27,13 @@ int main(int argc, char *argv[])
 	
 	//init rundom generator
     	int random = rand();
-    	srand(randomPivot);
-
+    	srand(randomPivot); int max=0;
+for (int i=0;i<numOfRandomNumbers;i++){
+		random = rand(); if(random>max) max=random;}
+ printf("%d\n", max);
 	//generate random numbers
 	for (int i=0;i<numOfRandomNumbers;i++){
-		random = rand();
+		random = rand(); if(random>max) max=random;
         	//check if the number is prime
 		if (isPrime(random)){
 			//if do, add up it's sum, and increment counter
